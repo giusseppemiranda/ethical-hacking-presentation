@@ -53,16 +53,20 @@ body{background:#050505;overflow:hidden;font-family:'Courier New',monospace;heig
 /* S1: Scale */
 .s1-tick{font-size:52px;color:#0f0;text-shadow:0 0 20px rgba(0,255,0,.6);position:absolute;transition:all .5s}
 .s1-tick.hide{opacity:0;transform:scale(.4)}
-.s1-scale{opacity:0;transition:opacity .8s;display:flex;align-items:center;gap:28px}
+.s1-scale{opacity:0;transition:opacity .8s;display:flex;align-items:center;gap:0;position:relative}
 .s1-scale.show{opacity:1}
-.s1-plate{width:150px;padding:18px;border:2px solid #333;border-radius:9px;text-align:center;background:rgba(0,0,0,.7);transition:all 1.5s}
-.s1-plate.left.tip{border-color:#0f0;transform:translateY(-28px);box-shadow:0 0 18px rgba(0,255,0,.3)}
-.s1-plate.right.tip{border-color:#f00;transform:translateY(28px);box-shadow:0 0 18px rgba(255,0,0,.3)}
+.s1-mid{display:flex;flex-direction:column;align-items:center;width:60px}
+.s1-beam{width:340px;height:4px;background:#555;border-radius:2px;transition:transform 1.5s ease;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(0deg)}
+.s1-beam.tip{transform:translate(-50%,-50%) rotate(12deg)}
+.s1-pivot{width:14px;height:14px;background:#0f0;border-radius:50%;box-shadow:0 0 10px rgba(0,255,0,.5);z-index:2}
+.s1-stand{width:3px;height:60px;background:#444;border-radius:2px}
+.s1-plate{width:150px;padding:18px;border:2px solid #333;border-radius:9px;text-align:center;background:rgba(0,0,0,.7);transition:all 1.5s ease}
+.s1-plate.left.tip{border-color:#0f0;transform:translateY(-35px);box-shadow:0 0 18px rgba(0,255,0,.3)}
+.s1-plate.right.tip{border-color:#f00;transform:translateY(35px);box-shadow:0 0 18px rgba(255,0,0,.3)}
 .s1-val{font-size:26px;font-weight:bold}
 .s1-val.green{color:#0f0;text-shadow:0 0 8px rgba(0,255,0,.5)}
 .s1-val.red{color:#f00;text-shadow:0 0 8px rgba(255,0,0,.5)}
 .s1-lbl{font-size:9px;color:#777;margin-top:6px;letter-spacing:1px}
-.s1-vs{color:#444;font-size:13px;letter-spacing:3px}
 .s1-mult{font-size:34px;color:#0ff;text-shadow:0 0 18px rgba(0,255,255,.5);opacity:0;transition:all .7s;position:absolute;bottom:18%}
 .s1-mult.show{opacity:1}
 
@@ -175,7 +179,11 @@ body{background:#050505;overflow:hidden;font-family:'Courier New',monospace;heig
   <div id="s1-tick" class="s1-tick">$0</div>
   <div id="s1-scale" class="s1-scale">
     <div id="s1-pl" class="s1-plate left"><div class="s1-val green">$150K</div><div class="s1-lbl">HACKER PAID</div></div>
-    <div class="s1-vs">VS</div>
+    <div class="s1-mid">
+      <div id="s1-beam" class="s1-beam"></div>
+      <div class="s1-pivot"></div>
+      <div class="s1-stand"></div>
+    </div>
     <div id="s1-pr" class="s1-plate right"><div class="s1-val red">$4.45M</div><div class="s1-lbl">BREACH COST</div></div>
   </div>
   <div id="s1-mult" class="s1-mult">30x SAVED</div>
@@ -275,14 +283,15 @@ function resetS0(){
 // === SLIDE 1: MONEY SCALE ===
 let s1Timer;
 function initS1(){
-  const tick=document.getElementById('s1-tick'),scale=document.getElementById('s1-scale'),pl=document.getElementById('s1-pl'),pr=document.getElementById('s1-pr'),mult=document.getElementById('s1-mult');
+  const tick=document.getElementById('s1-tick'),scale=document.getElementById('s1-scale'),pl=document.getElementById('s1-pl'),pr=document.getElementById('s1-pr'),mult=document.getElementById('s1-mult'),beam=document.getElementById('s1-beam');
   let v=0;
-  s1Timer=setInterval(()=>{v+=Math.floor(8000+Math.random()*22000);if(v>1000000)v=1000000;tick.textContent='$'+v.toLocaleString();if(v>=1000000){clearInterval(s1Timer);setTimeout(()=>{tick.classList.add('hide');setTimeout(()=>{scale.classList.add('show');setTimeout(()=>{pl.classList.add('tip');pr.classList.add('tip');setTimeout(()=>mult.classList.add('show'),1200)},600)},500)},700)}},75);
+  s1Timer=setInterval(()=>{v+=Math.floor(8000+Math.random()*22000);if(v>1000000)v=1000000;tick.textContent='$'+v.toLocaleString();if(v>=1000000){clearInterval(s1Timer);setTimeout(()=>{tick.classList.add('hide');setTimeout(()=>{scale.classList.add('show');setTimeout(()=>{beam.classList.add('tip');pl.classList.add('tip');pr.classList.add('tip');setTimeout(()=>mult.classList.add('show'),1200)},600)},500)},700)}},75);
 }
 function resetS1(){
   clearInterval(s1Timer);
   document.getElementById('s1-tick').className='s1-tick';document.getElementById('s1-tick').textContent='$0';
   document.getElementById('s1-scale').className='s1-scale';
+  document.getElementById('s1-beam').className='s1-beam';
   document.getElementById('s1-pl').className='s1-plate left';
   document.getElementById('s1-pr').className='s1-plate right';
   document.getElementById('s1-mult').className='s1-mult';
