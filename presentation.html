@@ -346,7 +346,7 @@ function initS3(){
     if(c.t==='p')ln.innerHTML=`<span class="s3-p">└─$ </span><span class="s3-c">${c.x}</span>`;
     else{const m={o:'s3-o',w:'s3-w',e:'s3-e',s:'s3-s'};ln.innerHTML=`<span class="${m[c.t]}">${c.x}</span>`}
     body.appendChild(ln);body.scrollTop=body.scrollHeight;i++;
-    s3Timeout=setTimeout(next,c.t==='p'?1500:450+Math.random()*250);
+    s3Timeout=setTimeout(next,c.t==='p'?2500:800+Math.random()*400);
   }
   next();
 }
