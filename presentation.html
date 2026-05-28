@@ -6,875 +6,432 @@
 <title>Ethical Hacking - The Unusual Career</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a0a;overflow:hidden;font-family:'Courier New',monospace;height:100vh;width:100vw;transition:background-color 1s ease}
-.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 1s ease;pointer-events:none}
+body{background:#050505;overflow:hidden;font-family:'Courier New',monospace;height:100vh;width:100vw;transition:background-color 1s ease}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 1.2s ease;pointer-events:none}
 .slide.active{opacity:1;pointer-events:all}
 
 /* Timer */
-.timer-container{position:fixed;top:20px;right:20px;z-index:1000;width:80px;height:80px}
-.timer-ring{width:80px;height:80px;border-radius:50%;border:3px solid #0f0;position:relative;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);box-shadow:0 0 15px #0f0,inset 0 0 15px rgba(0,255,0,0.1)}
-.timer-ring::before{content:'';position:absolute;width:100%;height:100%;border-radius:50%;border:2px solid transparent;border-top-color:#0f0;animation:spin 2s linear infinite}
-.timer-text{color:#0f0;font-size:18px;font-weight:bold;text-shadow:0 0 10px #0f0;font-family:'Courier New',monospace}
-.timer-label{position:fixed;top:105px;right:20px;color:#0f0;font-size:10px;text-align:center;width:80px;opacity:0.7;letter-spacing:2px}
+.timer-box{position:fixed;top:20px;right:20px;z-index:1000;width:70px;height:70px;border-radius:50%;border:2px solid #0f0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);box-shadow:0 0 12px rgba(0,255,0,0.4)}
+.timer-box span{color:#0f0;font-size:20px;font-weight:bold;text-shadow:0 0 8px #0f0}
+.timer-label{position:fixed;top:95px;right:20px;color:#0f0;font-size:9px;text-align:center;width:70px;opacity:0.5;letter-spacing:2px}
+.progress{position:fixed;bottom:0;left:0;height:2px;background:linear-gradient(90deg,#0f0,#0ff);z-index:1000;transition:width 0.3s;box-shadow:0 0 6px #0f0}
+.slide-num{position:fixed;bottom:15px;right:20px;color:#0f0;font-size:11px;opacity:0.4;z-index:1000}
 
-/* Progress bar */
-.progress-bar{position:fixed;bottom:0;left:0;height:3px;background:linear-gradient(90deg,#0f0,#0ff);transition:width 0.3s linear;z-index:1000;box-shadow:0 0 10px #0f0}
+/* Canvas */
+#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;opacity:0.12}
 
-/* Slide counter */
-.slide-counter{position:fixed;bottom:20px;right:20px;color:#0f0;font-size:12px;opacity:0.6;z-index:1000}
+/* === SLIDE 1 === */
+.s1{display:flex;align-items:center;justify-content:center}
+.s1-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.s1-left{position:absolute;left:4%;top:8%;width:260px;height:84%;overflow:hidden;opacity:0.5}
+.s1-right{position:absolute;right:4%;top:8%;width:240px;height:84%;overflow:hidden;opacity:0.4}
+.s1-line{color:#0f0;font-size:11px;line-height:1.9;opacity:0}
+.s1-center{display:flex;flex-direction:column;align-items:center;gap:18px;z-index:2}
+.s1-lock{position:relative}
+.s1-shackle{width:54px;height:44px;border:6px solid #0f0;border-bottom:none;border-radius:30px 30px 0 0;margin:0 auto;transition:all 0.6s ease}
+.s1-shackle.open{transform:translateY(-12px) rotate(12deg);border-color:#0ff}
+.s1-body{width:90px;height:70px;background:#111;border-radius:8px;margin:0 auto;border:2px solid #0f0;box-shadow:0 0 15px rgba(0,255,0,0.3);position:relative;transition:all 0.6s}
+.s1-body.open{border-color:#0ff;box-shadow:0 0 40px rgba(0,255,255,0.6)}
+.s1-hole{width:14px;height:14px;background:#0f0;border-radius:50%;position:absolute;top:18px;left:50%;transform:translateX(-50%);box-shadow:0 0 8px #0f0}
+.s1-hole::after{content:'';width:5px;height:18px;background:#0f0;position:absolute;top:11px;left:50%;transform:translateX(-50%);border-radius:0 0 3px 3px}
+.s1-pw{width:240px;height:36px;background:#0a0a0a;border:2px solid #333;border-radius:4px;display:flex;align-items:center;padding:0 10px;gap:4px;position:relative}
+.s1-pw.fail{border-color:#f00;animation:shake .3s}
+.s1-pw.ok{border-color:#0f0;box-shadow:0 0 15px rgba(0,255,0,0.4)}
+.s1-dot{width:9px;height:9px;background:#0f0;border-radius:50%;opacity:0;transition:opacity .1s}
+.s1-dot.on{opacity:1}
+.s1-dot.bad{background:#f00}
+.s1-status{position:absolute;right:8px;font-size:10px;color:#f00;opacity:0}
+.s1-status.on{opacity:1}
+.s1-status.good{color:#0f0}
+.s1-attempts{color:#555;font-size:10px;letter-spacing:1px}
+.s1-burst{position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,255,0.3),transparent 70%);opacity:0;transform:scale(0);transition:all .8s}
+.s1-burst.go{opacity:1;transform:scale(2.2)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 
-/* Matrix rain canvas */
-#matrix-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;opacity:0.15}
-
-/* SLIDE 1 - Live Breach: Port scan + brute force */
-.slide1-content{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.port-scan{position:absolute;left:5%;top:10%;width:280px;height:80%;overflow:hidden;opacity:0.6}
-.scan-line-text{color:#0f0;font-size:11px;opacity:0;white-space:nowrap;line-height:1.8}
-.breach-center{display:flex;flex-direction:column;align-items:center;gap:20px;z-index:2}
-.lock-icon{position:relative;animation:pulse 2s ease-in-out infinite}
-.lock-shackle{width:60px;height:50px;border:7px solid #0f0;border-bottom:none;border-radius:35px 35px 0 0;margin:0 auto;transition:transform 0.5s ease}
-.lock-shackle.cracked{transform:translateY(-15px) rotate(15deg);border-color:#ff0}
-.lock-body{width:100px;height:80px;background:#1a1a1a;border-radius:8px;margin:0 auto;border:3px solid #0f0;box-shadow:0 0 20px rgba(0,255,0,0.4);position:relative;transition:all 0.5s ease}
-.lock-body.cracked{border-color:#ff0;box-shadow:0 0 40px rgba(255,255,0,0.6)}
-.lock-body.open{border-color:#0f0;box-shadow:0 0 60px rgba(0,255,0,1)}
-.lock-keyhole{width:16px;height:16px;background:#0f0;border-radius:50%;position:absolute;top:22px;left:50%;transform:translateX(-50%);box-shadow:0 0 10px #0f0}
-.lock-keyhole::after{content:'';width:6px;height:20px;background:#0f0;position:absolute;top:12px;left:50%;transform:translateX(-50%);border-radius:0 0 3px 3px}
-.password-field{width:260px;height:40px;background:#111;border:2px solid #333;border-radius:5px;display:flex;align-items:center;padding:0 12px;gap:4px;position:relative;overflow:hidden}
-.password-field.fail{border-color:#f00;animation:shake 0.3s ease}
-.password-field.success{border-color:#0f0;box-shadow:0 0 20px rgba(0,255,0,0.5)}
-.pw-dot{width:10px;height:10px;background:#0f0;border-radius:50%;opacity:0;transition:opacity 0.1s}
-.pw-dot.visible{opacity:1}
-.pw-dot.fail{background:#f00}
-.pw-status{position:absolute;right:10px;font-size:11px;color:#f00;opacity:0}
-.pw-status.show{opacity:1}
-.pw-status.success{color:#0f0}
-.attempt-counter{color:#666;font-size:11px;letter-spacing:1px}
-.burst-effect{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,0,0.4) 0%,transparent 70%);opacity:0;transform:scale(0);transition:all 0.8s ease}
-.burst-effect.active{opacity:1;transform:scale(2)}
-.ip-scroll{position:absolute;right:5%;top:10%;width:250px;height:80%;overflow:hidden;opacity:0.5}
-.ip-line{color:#0f0;font-size:11px;opacity:0;white-space:nowrap;line-height:1.8}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-
-/* SLIDE 2 - Scale: Hacker cost vs Breach cost */
-.slide2-content{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:30px}
-.scale-visual{position:relative;width:500px;height:300px;display:flex;align-items:center;justify-content:center}
-.scale-beam{position:absolute;width:400px;height:4px;background:#444;top:50%;left:50%;transform:translate(-50%,-50%) rotate(0deg);transition:transform 2s ease;border-radius:2px}
-.scale-beam.tilt{transform:translate(-50%,-50%) rotate(15deg)}
-.scale-pivot{position:absolute;width:16px;height:16px;background:#0f0;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 15px #0f0;z-index:2}
-.scale-stand{position:absolute;width:4px;height:80px;background:#444;top:50%;left:50%;transform:translate(-50%,0);border-radius:2px}
-.scale-plate{position:absolute;width:140px;height:80px;border:2px solid #444;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);transition:all 2s ease}
-.scale-plate.left{top:40%;left:8%}
-.scale-plate.right{top:40%;right:8%}
-.scale-plate.left.heavy{top:25%;border-color:#0f0;box-shadow:0 0 15px rgba(0,255,0,0.3)}
-.scale-plate.right.heavy{top:55%;border-color:#f00;box-shadow:0 0 15px rgba(255,0,0,0.3)}
-.plate-value{font-size:24px;font-weight:bold;font-family:'Courier New',monospace;transition:all 1s ease}
-.plate-value.green{color:#0f0;text-shadow:0 0 15px rgba(0,255,0,0.6)}
-.plate-value.red{color:#f00;text-shadow:0 0 15px rgba(255,0,0,0.6)}
-.plate-label{font-size:10px;color:#888;letter-spacing:1px;margin-top:5px}
-.s2-ticker{font-size:64px;color:#0f0;font-family:'Courier New',monospace;text-shadow:0 0 30px rgba(0,255,0,0.8);opacity:0;transition:all 0.5s ease;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-.s2-ticker.show{opacity:1}
-.s2-ticker.hide{opacity:0;transform:translate(-50%,-50%) scale(0.5)}
-.s2-multiplier{position:absolute;bottom:12%;left:50%;transform:translateX(-50%);font-size:40px;color:#0ff;font-family:'Courier New',monospace;text-shadow:0 0 25px rgba(0,255,255,0.8);opacity:0;transition:all 0.8s ease}
-.s2-multiplier.show{opacity:1;transform:translateX(-50%) scale(1.1)}
-
-/* SLIDE 3 - Pentagon War Room: Radar + Fortress + Breach */
-.slide3-content{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.radar{position:absolute;width:400px;height:400px;border-radius:50%;border:2px solid rgba(0,255,0,0.3);top:50%;left:50%;margin-top:-200px;margin-left:-200px}
-.radar-ring{position:absolute;border-radius:50%;border:1px solid rgba(0,255,0,0.15);top:50%;left:50%;transform:translate(-50%,-50%)}
-.radar-ring.r1{width:75%;height:75%}
-.radar-ring.r2{width:50%;height:50%}
-.radar-ring.r3{width:25%;height:25%}
-.radar-sweep{position:absolute;width:50%;height:2px;top:50%;left:50%;transform-origin:left center;background:linear-gradient(90deg,rgba(0,255,0,0.8),transparent);animation:radarSweep 4s linear infinite}
-.radar-crosshair{position:absolute;width:100%;height:100%;top:0;left:0}
-.radar-crosshair::before{content:'';position:absolute;width:1px;height:100%;left:50%;background:rgba(0,255,0,0.1)}
-.radar-crosshair::after{content:'';position:absolute;height:1px;width:100%;top:50%;background:rgba(0,255,0,0.1)}
-.fortress{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;display:flex;align-items:center;justify-content:center}
-.fortress svg{width:100%;height:100%;transition:filter 1s ease}
-.fortress.breached svg{filter:drop-shadow(0 0 20px rgba(255,0,0,0.8)) hue-rotate(300deg)}
-.fortress-shield{position:absolute;width:180px;height:180px;border-radius:50%;border:2px solid rgba(0,255,0,0.4);top:50%;left:50%;transform:translate(-50%,-50%);transition:all 1s ease;box-shadow:0 0 20px rgba(0,255,0,0.2) inset}
-.fortress-shield.down{border-color:rgba(255,0,0,0.4);box-shadow:0 0 20px rgba(255,0,0,0.3) inset;animation:shieldFlicker 0.2s 5}
-.ping{position:absolute;width:8px;height:8px;border-radius:50%;background:#0f0;box-shadow:0 0 8px #0f0;opacity:0;transform:scale(0)}
-.ping.active{opacity:1;transform:scale(1);transition:all 0.3s ease}
-.ping.threat{background:#f00;box-shadow:0 0 8px #f00}
-.s3-timer{position:absolute;top:8%;left:50%;transform:translateX(-50%);font-size:20px;color:#0f0;font-family:'Courier New',monospace;letter-spacing:3px;opacity:0.8}
-.s3-counter{position:absolute;bottom:8%;left:50%;transform:translateX(-50%);font-size:60px;color:#f00;font-family:'Courier New',monospace;text-shadow:0 0 20px rgba(255,0,0,0.6);opacity:0;transition:opacity 0.5s}
-.s3-counter.show{opacity:1}
-.s3-label{position:absolute;top:8%;right:8%;color:#0f0;font-size:11px;opacity:0.6;text-align:right;line-height:1.8}
-.data-leak{position:absolute;font-size:10px;color:#f00;opacity:0;white-space:nowrap;font-family:'Courier New',monospace}
-.data-leak.visible{opacity:0.8;animation:leakFloat 3s ease-out forwards}
-@keyframes radarSweep{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes shieldFlicker{0%,100%{opacity:1}50%{opacity:0.3}}
-@keyframes leakFloat{0%{transform:translateY(0);opacity:0.8}100%{transform:translateY(-60px);opacity:0}}
-
-/* SLIDE 4 - Live Hacking Terminal Simulation */
-.slide4-content{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.hack-terminal{width:700px;height:400px;background:#0c0c0c;border:1px solid #333;border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.8),0 0 20px rgba(0,255,0,0.1)}
-.hack-terminal-header{height:32px;background:linear-gradient(180deg,#2a2a2a,#1a1a1a);display:flex;align-items:center;padding:0 12px;gap:7px;border-bottom:1px solid #111}
-.ht-dot{width:11px;height:11px;border-radius:50%}
-.ht-dot.r{background:#ff5f56}.ht-dot.y{background:#ffbd2e}.ht-dot.g{background:#27c93f}
-.ht-title{color:#888;font-size:11px;margin-left:auto;margin-right:auto}
-.hack-terminal-body{padding:16px;height:calc(100% - 32px);overflow:hidden;position:relative}
-.hack-terminal-body::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,rgba(0,255,0,0.02) 0px,transparent 1px,transparent 2px);pointer-events:none}
-.ht-line{font-size:13px;line-height:1.7;opacity:0;white-space:pre-wrap;word-break:break-all}
-.ht-line.visible{opacity:1;animation:fadeInUp 0.3s ease}
-.ht-prompt{color:#6f6}
-.ht-cmd{color:#fff}
-.ht-output{color:#0f0;opacity:0.7}
-.ht-warning{color:#ff0}
-.ht-success{color:#0ff}
-.ht-error{color:#f55}
-.ht-cursor{display:inline-block;width:8px;height:14px;background:#0f0;animation:cursorBlink 1s step-end infinite;vertical-align:middle}
-.phase-indicator{position:absolute;top:20px;left:20px;padding:6px 14px;border:1px solid #0f0;border-radius:4px;color:#0f0;font-size:11px;letter-spacing:2px;opacity:0;transition:all 0.5s ease;background:rgba(0,20,0,0.8)}
-.phase-indicator.show{opacity:1}
-.phase-indicator.warn{border-color:#f00;color:#f00}
-.phase-indicator.done{border-color:#0ff;color:#0ff}
-
-/* SLIDE 5 - Skill Tree: What students learn */
-.slide5-content{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.skill-tree{position:relative;width:700px;height:450px}
-.skill-node{position:absolute;width:60px;height:60px;border-radius:50%;border:2px solid #333;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);opacity:0.3;transform:scale(0.8);transition:all 0.6s ease;font-size:22px}
-.skill-node.unlocked{opacity:1;transform:scale(1);border-color:#0f0;box-shadow:0 0 15px rgba(0,255,0,0.4)}
-.skill-node.unlocked.tier2{border-color:#0ff;box-shadow:0 0 15px rgba(0,255,255,0.4)}
-.skill-node.unlocked.tier3{border-color:#f0f;box-shadow:0 0 15px rgba(255,0,255,0.4)}
-.skill-node-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:8px;color:#0f0;letter-spacing:1px;white-space:nowrap;opacity:0;transition:opacity 0.5s}
-.skill-node.unlocked .skill-node-label{opacity:1}
-.skill-node.unlocked.tier2 .skill-node-label{color:#0ff}
-.skill-node.unlocked.tier3 .skill-node-label{color:#f0f}
-.skill-connector{position:absolute;height:2px;background:#333;transform-origin:left center;transition:background 0.5s ease}
-.skill-connector.active{background:#0f0;box-shadow:0 0 5px rgba(0,255,0,0.5)}
-.skill-connector.active.t2{background:#0ff;box-shadow:0 0 5px rgba(0,255,255,0.5)}
-.tree-title{position:absolute;top:5%;left:50%;transform:translateX(-50%);color:#0f0;font-size:12px;letter-spacing:4px;opacity:0.6}
-.xp-bar{position:absolute;bottom:8%;left:50%;transform:translateX(-50%);width:300px;height:8px;background:#222;border-radius:4px;overflow:hidden}
-.xp-fill{height:100%;width:0%;background:linear-gradient(90deg,#0f0,#0ff,#f0f);border-radius:4px;transition:width 0.5s ease}
-
-/* SLIDE 6 - Choose Your Path: Criminal vs Ethical */
-.slide6-content{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.path-split{position:relative;width:100%;height:100%;display:flex}
-.path-side{width:50%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:all 1.5s ease;position:relative;overflow:hidden}
-.path-side.dark{background:rgba(20,0,0,0.4);border-right:1px solid #333}
-.path-side.light{background:rgba(0,20,0,0.4)}
-.path-side.dark.fade{opacity:0.2;width:20%}
-.path-side.light.expand{width:80%;background:rgba(0,40,0,0.6)}
-.path-icon{font-size:60px;opacity:0;transform:translateY(20px);transition:all 0.8s ease}
-.path-icon.show{opacity:1;transform:translateY(0)}
-.path-items{display:flex;flex-direction:column;align-items:center;gap:12px}
-.path-item{display:flex;align-items:center;gap:10px;opacity:0;transform:translateX(-20px);transition:all 0.5s ease;font-size:14px}
-.path-item.show{opacity:1;transform:translateX(0)}
-.path-item.dark-item{color:#f00}
-.path-item.light-item{color:#0f0}
-.path-item-icon{font-size:20px}
-.path-divider{position:absolute;left:50%;top:0;width:2px;height:100%;background:linear-gradient(180deg,transparent,#555,transparent);transition:left 1.5s ease;z-index:5}
-.path-divider.shift{left:20%}
-.final-message{position:absolute;bottom:10%;left:60%;transform:translateX(-50%);opacity:0;transition:all 1s ease 0.5s;text-align:center}
-.final-message.show{opacity:1}
-.final-number{font-size:48px;color:#0f0;font-family:'Courier New',monospace;text-shadow:0 0 30px rgba(0,255,0,0.6);display:block;margin-bottom:5px}
-.final-sub{font-size:11px;color:#0f0;letter-spacing:3px;opacity:0.6}
-
-/* Animations */
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-@keyframes shackleOpen{0%,40%{transform:translateY(0) rotate(0)}50%,90%{transform:translateY(-15px) rotate(10deg)}100%{transform:translateY(0) rotate(0)}}
-@keyframes fall{0%{transform:translateY(-50px);opacity:1}100%{transform:translateY(100vh);opacity:0.3}}
-@keyframes badgePulse{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(0,255,0,0.3)}50%{transform:scale(1.05);box-shadow:0 0 60px rgba(0,255,0,0.5)}}
-@keyframes glitch{0%,90%,100%{transform:translate(0)}92%{transform:translate(-2px,2px)}94%{transform:translate(2px,-2px)}96%{transform:translate(-1px,-1px)}98%{transform:translate(1px,1px)}}
-@keyframes rotate3d{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
-@keyframes scan{0%,100%{transform:translate(-50%,-50%) rotate(0deg);opacity:0.5}50%{transform:translate(-50%,-50%) rotate(180deg);opacity:1}}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-@keyframes screenFlicker{0%,100%{opacity:0.8}50%{opacity:1}}
-@keyframes globeRotate{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
-@keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(2);opacity:0.5}}
-@keyframes connectPulse{0%,100%{opacity:0.3}50%{opacity:1}}
-@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
-@keyframes numberGlow{from{text-shadow:0 0 10px rgba(0,255,0,0.5)}to{text-shadow:0 0 25px rgba(0,255,0,1),0 0 50px rgba(0,255,0,0.3)}}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes scanlineMove{from{top:-100%}to{top:100%}}
+/* === SLIDE 2 === */
+.s2-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.s2-ticker{font-size:58px;color:#0f0;font-family:'Courier New',monospace;text-shadow:0 0 25px rgba(0,255,0,0.7);position:absolute;transition:all .6s}
+.s2-ticker.hide{opacity:0;transform:scale(.5)}
+.s2-scale{opacity:0;transition:opacity 1s;display:flex;align-items:center;gap:30px}
+.s2-scale.show{opacity:1}
+.s2-plate{width:160px;padding:20px;border:2px solid #333;border-radius:10px;text-align:center;background:rgba(0,0,0,0.7);transition:all 1.5s}
+.s2-plate.left.tip{border-color:#0f0;transform:translateY(-30px);box-shadow:0 0 20px rgba(0,255,0,0.3)}
+.s2-plate.right.tip{border-color:#f00;transform:translateY(30px);box-shadow:0 0 20px rgba(255,0,0,0.3)}
+.s2-val{font-size:28px;font-weight:bold;font-family:'Courier New',monospace}
+.s2-val.g{color:#0f0;text-shadow:0 0 10px rgba(0,255,0,0.5)}
+.s2-val.r{color:#f00;text-shadow:0 0 10px rgba(255,0,0,0.5)}
+.s2-lbl{font-size:10px;color:#888;margin-top:8px;letter-spacing:1px}
+.s2-vs{font-size:14px;color:#555;letter-spacing:3px}
+.s2-mult{font-size:36px;color:#0ff;text-shadow:0 0 20px rgba(0,255,255,0.6);opacity:0;transition:all .8s;margin-top:30px}
+.s2-mult.show{opacity:1}
 </style>
 </head>
 <body>
-<canvas id="matrix-canvas"></canvas>
-
-<!-- Timer -->
-<div class="timer-container">
-<div class="timer-ring">
-<span class="timer-text" id="timer">30</span>
-</div>
-</div>
+<canvas id="bg"></canvas>
+<div class="timer-box"><span id="timer">30</span></div>
 <div class="timer-label">DECRYPT</div>
+<div class="progress" id="progress"></div>
+<div class="slide-num" id="snum">01/06</div>
 
-<!-- Progress bar -->
-<div class="progress-bar" id="progress-bar"></div>
-
-<!-- Slide counter -->
-<div class="slide-counter" id="slide-counter">01/06</div>
-
-<!-- SLIDE 1: Live Breach - Port scan + brute force -->
-<div class="slide slide1 active" id="slide-1">
-<div class="slide1-content">
-<div class="port-scan" id="port-scan"></div>
-<div class="breach-center">
-<div class="lock-icon">
-<div class="lock-shackle" id="lock-shackle"></div>
-<div class="lock-body" id="lock-body">
-<div class="lock-keyhole"></div>
+<!-- SLIDE 1 -->
+<div class="slide s1 active" id="sl1">
+<div class="s1-wrap">
+<div class="s1-left" id="s1-left"></div>
+<div class="s1-center">
+<div class="s1-lock">
+<div class="s1-shackle" id="s1-shackle"></div>
+<div class="s1-body" id="s1-body"><div class="s1-hole"></div></div>
 </div>
+<div class="s1-pw" id="s1-pw">
+<div class="s1-dot"></div><div class="s1-dot"></div><div class="s1-dot"></div>
+<div class="s1-dot"></div><div class="s1-dot"></div><div class="s1-dot"></div>
+<div class="s1-dot"></div><div class="s1-dot"></div>
+<span class="s1-status" id="s1-status">DENIED</span>
 </div>
-<div class="password-field" id="pw-field">
-<div class="pw-dot" id="d1"></div>
-<div class="pw-dot" id="d2"></div>
-<div class="pw-dot" id="d3"></div>
-<div class="pw-dot" id="d4"></div>
-<div class="pw-dot" id="d5"></div>
-<div class="pw-dot" id="d6"></div>
-<div class="pw-dot" id="d7"></div>
-<div class="pw-dot" id="d8"></div>
-<span class="pw-status" id="pw-status">DENIED</span>
+<div class="s1-attempts" id="s1-att"></div>
+<div class="s1-burst" id="s1-burst"></div>
 </div>
-<div class="attempt-counter" id="attempt-counter"></div>
-<div class="burst-effect" id="burst-effect"></div>
-</div>
-<div class="ip-scroll" id="ip-scroll"></div>
+<div class="s1-right" id="s1-right"></div>
 </div>
 </div>
 
-<!-- SLIDE 2: Scale - Hacker cost vs Breach cost -->
-<div class="slide slide2" id="slide-2">
-<div class="slide2-content">
-<div class="s2-ticker" id="s2-ticker">$0</div>
-<div class="scale-visual" id="scale-visual" style="opacity:0">
-<div class="scale-beam" id="scale-beam"></div>
-<div class="scale-pivot"></div>
-<div class="scale-stand"></div>
-<div class="scale-plate left" id="plate-left">
-<div class="plate-value green" id="plate-left-val">$150K</div>
-<div class="plate-label">HACKER PAID</div>
+<!-- SLIDE 2 -->
+<div class="slide s2" id="sl2">
+<div class="s2-wrap">
+<div class="s2-ticker" id="s2-tick">$0</div>
+<div class="s2-scale" id="s2-scale">
+<div class="s2-plate left" id="s2-pl"><div class="s2-val g">$150K</div><div class="s2-lbl">HACKER PAID</div></div>
+<div class="s2-vs">VS</div>
+<div class="s2-plate right" id="s2-pr"><div class="s2-val r">$4.45M</div><div class="s2-lbl">BREACH COST</div></div>
 </div>
-<div class="scale-plate right" id="plate-right">
-<div class="plate-value red" id="plate-right-val">$4.45M</div>
-<div class="plate-label">BREACH COST</div>
-</div>
-</div>
-<div class="s2-multiplier" id="s2-multiplier">30x SAVED</div>
+<div class="s2-mult" id="s2-mult">30x SAVED</div>
 </div>
 </div>
 
-<!-- SLIDE 3: Pentagon War Room -->
-<div class="slide slide3" id="slide-3">
-<div class="slide3-content">
-<div class="s3-timer" id="s3-timer">00:00</div>
-<div class="s3-label">HACK THE PENTAGON<br>1,410 ACTIVE</div>
-<div class="radar">
-<div class="radar-ring r1"></div>
-<div class="radar-ring r2"></div>
-<div class="radar-ring r3"></div>
-<div class="radar-crosshair"></div>
-<div class="radar-sweep"></div>
+<!-- SLIDE 3 -->
+<div class="slide s3" id="sl3">
+<div class="s3-wrap">
+<div class="s3-lbl">HACK THE PENTAGON<br>1,410 ACTIVE</div>
+<div class="s3-timer" id="s3-time">00:00</div>
+<div class="s3-radar"><div class="s3-ring r1"></div><div class="s3-ring r2"></div><div class="s3-ring r3"></div><div class="s3-sweep"></div></div>
+<div class="s3-fort" id="s3-fort">
+<svg viewBox="0 0 140 140"><polygon points="70,8 132,48 115,120 25,120 8,48" fill="rgba(0,20,0,0.5)" stroke="#0f0" stroke-width="2.5"/><text x="70" y="75" text-anchor="middle" fill="#0f0" font-size="16" font-family="Courier New" font-weight="bold">USA</text><text x="70" y="92" text-anchor="middle" fill="#0f0" font-size="8" font-family="Courier New" opacity="0.5">DEPT OF DEFENSE</text></svg>
 </div>
-<div class="fortress-shield" id="fortress-shield"></div>
-<div class="fortress" id="fortress">
-<svg viewBox="0 0 160 160">
-<polygon points="80,10 150,55 130,135 30,135 10,55" fill="rgba(0,30,0,0.6)" stroke="#0f0" stroke-width="2.5"/>
-<polygon points="80,25 135,60 118,125 42,125 25,60" fill="none" stroke="#0f0" stroke-width="1" opacity="0.4"/>
-<text x="80" y="85" text-anchor="middle" fill="#0f0" font-size="18" font-family="Courier New" font-weight="bold">USA</text>
-<text x="80" y="105" text-anchor="middle" fill="#0f0" font-size="9" font-family="Courier New" opacity="0.6">DEPT OF DEFENSE</text>
-</svg>
-</div>
-<div id="radar-pings"></div>
-<div class="s3-counter" id="s3-counter">0</div>
-<div id="data-leaks"></div>
+<div class="s3-shield" id="s3-shield"></div>
+<div id="s3-pings"></div>
+<div class="s3-count" id="s3-count">0</div>
+<div id="s3-leaks"></div>
 </div>
 </div>
 
-<!-- SLIDE 4: Live hacking terminal simulation -->
-<div class="slide slide4" id="slide-4">
-<div class="slide4-content">
-<div class="phase-indicator" id="phase-indicator">RECON</div>
-<div class="hack-terminal">
-<div class="hack-terminal-header">
-<div class="ht-dot r"></div>
-<div class="ht-dot y"></div>
-<div class="ht-dot g"></div>
-<span class="ht-title">hacker@kali:~/pentest</span>
-</div>
-<div class="hack-terminal-body" id="hack-body"></div>
+<!-- SLIDE 4 -->
+<div class="slide s4" id="sl4">
+<div class="s4-wrap">
+<div class="s4-phase" id="s4-phase">RECON</div>
+<div class="s4-term">
+<div class="s4-bar"><span class="s4-d r"></span><span class="s4-d y"></span><span class="s4-d g"></span><span class="s4-title">hacker@kali:~/pentest</span></div>
+<div class="s4-body" id="s4-body"></div>
 </div>
 </div>
 </div>
 
-<!-- SLIDE 5: Skill Tree - What students learn -->
-<div class="slide slide5" id="slide-5">
-<div class="slide5-content">
-<div class="skill-tree" id="skill-tree">
-<div class="tree-title">SKILL TREE — ETHICAL HACKER</div>
-<div id="skill-connectors"></div>
-<div id="skill-nodes"></div>
-<div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
-</div>
+<!-- SLIDE 5 -->
+<div class="slide s5" id="sl5">
+<div class="s5-wrap">
+<div class="s5-title">SKILL TREE — ETHICAL HACKER</div>
+<div class="s5-tree" id="s5-tree"></div>
+<div class="s5-xp"><div class="s5-xp-fill" id="s5-xp"></div></div>
 </div>
 </div>
 
-<!-- SLIDE 6: Choose Your Path -->
-<div class="slide slide6" id="slide-6">
-<div class="slide6-content" id="s6-content">
-<div class="path-split">
-<div class="path-side dark" id="path-dark">
-<div class="path-icon" id="dark-icon">🚔</div>
-<div class="path-items" id="dark-items"></div>
-</div>
-<div class="path-divider" id="path-divider"></div>
-<div class="path-side light" id="path-light">
-<div class="path-icon" id="light-icon">💻</div>
-<div class="path-items" id="light-items"></div>
+<!-- SLIDE 6 -->
+<div class="slide s6" id="sl6">
+<div class="s6-wrap" id="s6-wrap">
+<div class="s6-dark" id="s6-dark"><div class="s6-icon" id="s6-di">🚔</div><div class="s6-list" id="s6-dl"></div></div>
+<div class="s6-div" id="s6-divider"></div>
+<div class="s6-light" id="s6-light"><div class="s6-icon" id="s6-li">💻</div><div class="s6-list" id="s6-ll"></div></div>
+<div class="s6-final" id="s6-final"><span class="s6-big">$220,000+</span><span class="s6-sub">3,500,000 POSITIONS WAITING</span></div>
 </div>
 </div>
-<div class="final-message" id="final-message">
-<span class="final-number">$220,000+</span>
-<span class="final-sub">3,500,000 POSITIONS WAITING</span>
-</div>
-</div>
-</div>
+
+<style>
+/* === SLIDE 3 === */
+.s3-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.s3-lbl{position:absolute;top:7%;right:7%;color:#0f0;font-size:10px;opacity:0.5;text-align:right;line-height:2;letter-spacing:1px}
+.s3-timer{position:absolute;bottom:10%;left:50%;transform:translateX(-50%);font-size:44px;color:#0f0;text-shadow:0 0 15px rgba(0,255,0,0.6);transition:color .5s}
+.s3-radar{position:absolute;width:360px;height:360px;border-radius:50%;border:1px solid rgba(0,255,0,0.2);top:50%;left:50%;margin:-180px 0 0 -180px}
+.s3-ring{position:absolute;border-radius:50%;border:1px solid rgba(0,255,0,0.12);top:50%;left:50%;transform:translate(-50%,-50%)}
+.r1{width:75%;height:75%}.r2{width:50%;height:50%}.r3{width:25%;height:25%}
+.s3-sweep{position:absolute;width:50%;height:2px;top:50%;left:50%;transform-origin:left;background:linear-gradient(90deg,rgba(0,255,0,0.7),transparent);animation:sweep 4s linear infinite}
+.s3-fort{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:140px;height:140px;transition:filter 1s}
+.s3-fort.hit{filter:hue-rotate(300deg) drop-shadow(0 0 15px rgba(255,0,0,0.6))}
+.s3-shield{position:absolute;width:170px;height:170px;border-radius:50%;border:2px solid rgba(0,255,0,0.35);top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:inset 0 0 15px rgba(0,255,0,0.15);transition:all .8s}
+.s3-shield.down{border-color:rgba(255,0,0,0.4);box-shadow:inset 0 0 15px rgba(255,0,0,0.2);animation:flick .2s 4}
+.s3-ping{position:absolute;width:7px;height:7px;border-radius:50%;background:#0f0;box-shadow:0 0 6px #0f0;opacity:0;transform:scale(0);transition:all .3s}
+.s3-ping.on{opacity:1;transform:scale(1)}
+.s3-ping.red{background:#f00;box-shadow:0 0 6px #f00}
+.s3-count{position:absolute;bottom:10%;left:50%;transform:translateX(-50%);font-size:54px;color:#f00;text-shadow:0 0 15px rgba(255,0,0,0.5);opacity:0;transition:opacity .5s;margin-bottom:60px}
+.s3-count.on{opacity:1}
+.s3-leak{position:absolute;font-size:9px;color:#f00;opacity:0;font-family:'Courier New',monospace}
+.s3-leak.on{opacity:.7;animation:floatUp 3s forwards}
+@keyframes sweep{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes flick{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes floatUp{to{transform:translateY(-50px);opacity:0}}
+
+/* === SLIDE 4 === */
+.s4-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.s4-phase{position:absolute;top:18px;left:18px;padding:5px 12px;border:1px solid #0f0;border-radius:3px;color:#0f0;font-size:10px;letter-spacing:2px;background:rgba(0,15,0,0.7);opacity:0;transition:all .4s}
+.s4-phase.on{opacity:1}
+.s4-phase.red{border-color:#f00;color:#f00}
+.s4-phase.cyan{border-color:#0ff;color:#0ff}
+.s4-term{width:680px;height:380px;background:#0b0b0b;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden;box-shadow:0 15px 50px rgba(0,0,0,.7)}
+.s4-bar{height:30px;background:linear-gradient(180deg,#252525,#1a1a1a);display:flex;align-items:center;padding:0 10px;gap:6px;border-bottom:1px solid #111}
+.s4-d{width:10px;height:10px;border-radius:50%}
+.s4-d.r{background:#ff5f56}.s4-d.y{background:#ffbd2e}.s4-d.g{background:#27c93f}
+.s4-title{color:#777;font-size:10px;margin-left:auto;margin-right:auto}
+.s4-body{padding:14px;height:calc(100% - 30px);overflow:hidden}
+.s4-body::before{content:'';position:absolute;width:100%;height:100%;background:repeating-linear-gradient(0deg,rgba(0,255,0,.015) 0px,transparent 1px,transparent 2px);pointer-events:none}
+.s4-ln{font-size:12px;line-height:1.8;opacity:0;white-space:pre-wrap}
+.s4-ln.on{opacity:1}
+.s4-p{color:#6f6}.s4-c{color:#fff}.s4-o{color:#0f0;opacity:.7}.s4-w{color:#ff0}.s4-s{color:#0ff}.s4-e{color:#f55}
+
+/* === SLIDE 5 === */
+.s5-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.s5-title{position:absolute;top:5%;left:50%;transform:translateX(-50%);color:#0f0;font-size:11px;letter-spacing:3px;opacity:0.5}
+.s5-tree{position:relative;width:680px;height:420px}
+.s5-node{position:absolute;width:56px;height:56px;border-radius:50%;border:2px solid #333;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.8);opacity:.25;transform:scale(.8);transition:all .5s;font-size:20px}
+.s5-node.on{opacity:1;transform:scale(1);border-color:#0f0;box-shadow:0 0 12px rgba(0,255,0,0.3)}
+.s5-node.t2.on{border-color:#0ff;box-shadow:0 0 12px rgba(0,255,255,0.3)}
+.s5-node.t3.on{border-color:#f0f;box-shadow:0 0 12px rgba(255,0,255,0.3)}
+.s5-nlbl{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:7px;letter-spacing:1px;white-space:nowrap;opacity:0;transition:opacity .4s;color:#0f0}
+.s5-node.on .s5-nlbl{opacity:1}
+.s5-node.t2.on .s5-nlbl{color:#0ff}
+.s5-node.t3.on .s5-nlbl{color:#f0f}
+.s5-conn{position:absolute;height:2px;background:#222;transform-origin:left center;transition:background .4s}
+.s5-conn.on{background:#0f0;box-shadow:0 0 4px rgba(0,255,0,0.4)}
+.s5-conn.t2.on{background:#0ff}
+.s5-xp{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);width:280px;height:6px;background:#1a1a1a;border-radius:3px;overflow:hidden}
+.s5-xp-fill{height:100%;width:0%;background:linear-gradient(90deg,#0f0,#0ff,#f0f);border-radius:3px;transition:width .4s}
+
+/* === SLIDE 6 === */
+.s6-wrap{position:relative;width:100%;height:100%;display:flex;overflow:hidden}
+.s6-dark,.s6-light{width:50%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:all 1.5s}
+.s6-dark{background:rgba(20,0,0,0.3)}
+.s6-light{background:rgba(0,20,0,0.3)}
+.s6-dark.fade{opacity:.15;width:15%}
+.s6-light.grow{width:85%;background:rgba(0,30,0,0.5)}
+.s6-div{position:absolute;left:50%;top:0;width:1px;height:100%;background:linear-gradient(180deg,transparent,#444,transparent);transition:left 1.5s;z-index:3}
+.s6-div.shift{left:15%}
+.s6-icon{font-size:50px;opacity:0;transform:translateY(15px);transition:all .7s}
+.s6-icon.on{opacity:1;transform:translateY(0)}
+.s6-item{font-size:13px;opacity:0;transform:translateX(-10px);transition:all .4s}
+.s6-item.on{opacity:1;transform:translateX(0)}
+.s6-item.dk{color:#f00}
+.s6-item.lt{color:#0f0}
+.s6-final{position:absolute;bottom:9%;right:15%;text-align:center;opacity:0;transition:all 1s}
+.s6-final.on{opacity:1}
+.s6-big{display:block;font-size:42px;color:#0f0;font-family:'Courier New',monospace;text-shadow:0 0 20px rgba(0,255,0,0.5)}
+.s6-sub{font-size:10px;color:#0f0;letter-spacing:2px;opacity:.6}
+
+/* Shared */
+@keyframes fadeUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+</style>
 
 <script>
-// Matrix rain background
-const canvas = document.getElementById('matrix-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-const fontSize = 14;
-const columns = canvas.width / fontSize;
-const drops = Array(Math.floor(columns / 3)).fill(1);
+// Matrix background (lightweight)
+const cv=document.getElementById('bg'),cx=cv.getContext('2d');
+cv.width=innerWidth;cv.height=innerHeight;
+const ch='01',fs=14,cols=Math.floor(cv.width/fs/3),dr=Array(cols).fill(1);
+setInterval(()=>{cx.fillStyle='rgba(0,0,0,.07)';cx.fillRect(0,0,cv.width,cv.height);cx.fillStyle='#0f0';cx.font=fs+'px monospace';for(let i=0;i<dr.length;i++){cx.fillText(ch[Math.random()>.5?1:0],i*fs*3,dr[i]*fs);if(dr[i]*fs>cv.height&&Math.random()>.975)dr[i]=0;dr[i]++}},80);
+addEventListener('resize',()=>{cv.width=innerWidth;cv.height=innerHeight});
 
-function drawMatrix() {
-  ctx.fillStyle = 'rgba(0,0,0,0.08)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#0f0';
-  ctx.font = fontSize + 'px monospace';
-  for (let i = 0; i < drops.length; i++) {
-    const text = chars[Math.floor(Math.random() * chars.length)];
-    ctx.fillText(text, i * fontSize * 3, drops[i] * fontSize);
-    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-    drops[i]++;
-  }
-}
-setInterval(drawMatrix, 80);
+// === SLIDE 1: Brute Force ===
+function initS1(){
+  const ports=[21,22,80,443,3306,5432,8080,8443,3389,445];
+  const left=document.getElementById('s1-left'),right=document.getElementById('s1-right');
+  let scanInt=setInterval(()=>{const l=document.createElement('div');l.className='s1-line';l.style.animation='fadeUp .3s forwards';l.innerHTML=`${ports[Math.floor(Math.random()*ports.length)]}/tcp <span style="color:${Math.random()>.6?'#f00':'#0f0'}">${Math.random()>.6?'closed':'open'}</span>`;left.appendChild(l);if(left.children.length>22)left.removeChild(left.firstChild)},350);
+  let ipInt=setInterval(()=>{const l=document.createElement('div');l.className='s1-line';l.style.animation='fadeUp .3s forwards';l.textContent=`→ ${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}:${ports[Math.floor(Math.random()*ports.length)]}`;right.appendChild(l);if(right.children.length>22)right.removeChild(right.firstChild)},250);
 
-// SLIDE 1: Live breach simulation
-const ports = [21,22,23,25,53,80,110,135,139,143,443,445,993,995,1433,3306,3389,5432,5900,8080,8443,9090];
-const portScan = document.getElementById('port-scan');
-const ipScroll = document.getElementById('ip-scroll');
-let scanInterval, ipInterval, bruteForceTimeout;
-
-function randomIP() {
-  return `${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-}
-
-function startBreach() {
-  let scanIdx = 0;
-  // Port scan on left
-  scanInterval = setInterval(() => {
-    const line = document.createElement('div');
-    line.className = 'scan-line-text';
-    const port = ports[scanIdx % ports.length];
-    const state = Math.random() > 0.7 ? '<span style="color:#f00">closed</span>' : '<span style="color:#0f0">open</span>';
-    line.innerHTML = `${port}/tcp ${state}`;
-    line.style.animation = 'fadeInUp 0.3s forwards';
-    portScan.appendChild(line);
-    if (portScan.children.length > 25) portScan.removeChild(portScan.firstChild);
-    scanIdx++;
-  }, 300);
-
-  // IP addresses on right
-  ipInterval = setInterval(() => {
-    const line = document.createElement('div');
-    line.className = 'ip-line';
-    line.textContent = `→ ${randomIP()}:${ports[Math.floor(Math.random()*ports.length)]}`;
-    line.style.animation = 'fadeInUp 0.3s forwards';
-    ipScroll.appendChild(line);
-    if (ipScroll.children.length > 25) ipScroll.removeChild(ipScroll.firstChild);
-  }, 200);
-
-  // Brute force password attempts
-  let attempts = 0;
-  const pwField = document.getElementById('pw-field');
-  const status = document.getElementById('pw-status');
-  const counter = document.getElementById('attempt-counter');
-  const dots = document.querySelectorAll('.pw-dot');
-
-  function attempt() {
-    attempts++;
-    counter.textContent = `attempts: ${attempts}`;
-    // Fill dots randomly
-    const numDots = 4 + Math.floor(Math.random() * 5);
-    dots.forEach((d, i) => {
-      d.classList.toggle('visible', i < numDots);
-      d.classList.remove('fail');
-    });
-
-    if (attempts < 12) {
-      // Fail
-      setTimeout(() => {
-        pwField.classList.add('fail');
-        status.textContent = 'DENIED';
-        status.classList.add('show');
-        status.classList.remove('success');
-        dots.forEach(d => { d.classList.add('fail'); });
-        setTimeout(() => {
-          pwField.classList.remove('fail');
-          status.classList.remove('show');
-          dots.forEach(d => { d.classList.remove('visible','fail'); });
-          bruteForceTimeout = setTimeout(attempt, 600 + Math.random() * 400);
-        }, 400);
-      }, 300);
+  const pw=document.getElementById('s1-pw'),st=document.getElementById('s1-status'),att=document.getElementById('s1-att'),dots=pw.querySelectorAll('.s1-dot');
+  let attempts=0,to;
+  function tryPw(){
+    attempts++;att.textContent=`attempts: ${attempts}`;
+    const n=4+Math.floor(Math.random()*5);
+    dots.forEach((d,i)=>{d.classList.toggle('on',i<n);d.classList.remove('bad')});
+    if(attempts<14){
+      setTimeout(()=>{pw.classList.add('fail');st.textContent='DENIED';st.classList.add('on');st.classList.remove('good');dots.forEach(d=>d.classList.add('bad'));
+        setTimeout(()=>{pw.classList.remove('fail');st.classList.remove('on');dots.forEach(d=>{d.classList.remove('on','bad')});to=setTimeout(tryPw,500+Math.random()*400)},350)},250);
     } else {
-      // SUCCESS
-      setTimeout(() => {
-        pwField.classList.add('success');
-        status.textContent = 'ACCESS GRANTED';
-        status.classList.add('show','success');
-        dots.forEach(d => d.classList.add('visible'));
-        document.getElementById('lock-shackle').classList.add('cracked');
-        document.getElementById('lock-body').classList.add('open');
-        document.getElementById('burst-effect').classList.add('active');
-      }, 300);
+      setTimeout(()=>{pw.classList.add('ok');st.textContent='ACCESS GRANTED';st.classList.add('on','good');dots.forEach(d=>d.classList.add('on'));document.getElementById('s1-shackle').classList.add('open');document.getElementById('s1-body').classList.add('open');document.getElementById('s1-burst').classList.add('go');clearInterval(scanInt);clearInterval(ipInt)},250);
     }
   }
-  bruteForceTimeout = setTimeout(attempt, 2000);
+  to=setTimeout(tryPw,2000);
+}
+initS1();
+
+// === SLIDE 2: Scale ===
+let s2Go=false;
+function initS2(){
+  if(s2Go)return;s2Go=true;
+  const tick=document.getElementById('s2-tick'),scale=document.getElementById('s2-scale'),pl=document.getElementById('s2-pl'),pr=document.getElementById('s2-pr'),mult=document.getElementById('s2-mult');
+  let v=0;
+  const ti=setInterval(()=>{v+=Math.floor(8000+Math.random()*25000);if(v>1000000)v=1000000;tick.textContent='$'+v.toLocaleString();if(v>=1000000){clearInterval(ti);setTimeout(()=>{tick.classList.add('hide');setTimeout(()=>{scale.classList.add('show');setTimeout(()=>{pl.classList.add('tip');pr.classList.add('tip');setTimeout(()=>mult.classList.add('show'),1200)},700)},500)},800)}},70);
 }
 
-startBreach();
-
-// Slide 2: Scale animation - ticker then balance
-let s2Started = false;
-function startSlide2() {
-  if (s2Started) return;
-  s2Started = true;
-  const ticker = document.getElementById('s2-ticker');
-  const scaleVisual = document.getElementById('scale-visual');
-  const beam = document.getElementById('scale-beam');
-  const plateLeft = document.getElementById('plate-left');
-  const plateRight = document.getElementById('plate-right');
-  const multiplier = document.getElementById('s2-multiplier');
-
-  // Phase 1: Rapid ticker counting up
-  ticker.classList.add('show');
-  let val = 0;
-  const tickInt = setInterval(() => {
-    val += Math.floor(5000 + Math.random() * 20000);
-    if (val > 1000000) val = 1000000;
-    ticker.textContent = '$' + val.toLocaleString();
-    if (val >= 1000000) {
-      clearInterval(tickInt);
-      // Flash and hide ticker
-      setTimeout(() => {
-        ticker.classList.add('hide');
-        // Phase 2: Show scale
-        setTimeout(() => {
-          scaleVisual.style.opacity = '1';
-          scaleVisual.style.transition = 'opacity 1s ease';
-          // Tilt the beam (right side heavier = breach costs more)
-          setTimeout(() => {
-            beam.classList.add('tilt');
-            plateLeft.classList.add('heavy');
-            plateRight.classList.add('heavy');
-            // Show multiplier
-            setTimeout(() => multiplier.classList.add('show'), 1500);
-          }, 800);
-        }, 600);
-      }, 1000);
-    }
-  }, 80);
+// === SLIDE 3: Pentagon War Room ===
+let s3Go=false;
+function initS3(){
+  if(s3Go)return;s3Go=true;
+  const tm=document.getElementById('s3-time'),ct=document.getElementById('s3-count'),fort=document.getElementById('s3-fort'),sh=document.getElementById('s3-shield'),pings=document.getElementById('s3-pings'),leaks=document.getElementById('s3-leaks');
+  let pc=0;
+  const pi=setInterval(()=>{const p=document.createElement('div');p.className='s3-ping';const a=Math.random()*Math.PI*2,d=80+Math.random()*100;p.style.left=`calc(50% + ${Math.cos(a)*d}px)`;p.style.top=`calc(50% + ${Math.sin(a)*d}px)`;pings.appendChild(p);setTimeout(()=>p.classList.add('on'),30);pc++;if(pc>25)clearInterval(pi)},300);
+  let min=0;
+  const ti=setInterval(()=>{min++;tm.textContent=String(min).padStart(2,'0')+':00';if(min>=13){clearInterval(ti);tm.style.color='#f00';sh.classList.add('down');setTimeout(()=>{fort.classList.add('hit');pings.querySelectorAll('.s3-ping').forEach(p=>p.classList.add('red'))},800);setTimeout(()=>{ct.classList.add('on');let v=0;const vi=setInterval(()=>{v+=Math.floor(1+Math.random()*4);if(v>138)v=138;ct.textContent=v;if(Math.random()>.5){const lk=document.createElement('div');lk.className='s3-leak on';lk.textContent=['TOP SECRET','CLASSIFIED','CVE-2016-****','pwd:a8$k!','db_dump.sql','root@pentagon'][Math.floor(Math.random()*6)];lk.style.left=(30+Math.random()*40)+'%';lk.style.top=(35+Math.random()*20)+'%';leaks.appendChild(lk);setTimeout(()=>lk.remove(),3000)}if(v>=138)clearInterval(vi)},250)},1500)}},1100);
 }
 
-// Slide 3: Pentagon War Room (unchanged)
-let pentagonStarted = false;
-function startPentagon() {
-  if (pentagonStarted) return;
-  pentagonStarted = true;
-  const timerEl = document.getElementById('s3-timer');
-  const counterEl = document.getElementById('s3-counter');
-  const fortress = document.getElementById('fortress');
-  const shield = document.getElementById('fortress-shield');
-  const pingsContainer = document.getElementById('radar-pings');
-  const leaksContainer = document.getElementById('data-leaks');
-
-  let pingCount = 0;
-  const pingInt = setInterval(() => {
-    const ping = document.createElement('div');
-    ping.className = 'ping';
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 100 + Math.random() * 100;
-    ping.style.left = `calc(50% + ${Math.cos(angle) * dist}px)`;
-    ping.style.top = `calc(50% + ${Math.sin(angle) * dist}px)`;
-    pingsContainer.appendChild(ping);
-    setTimeout(() => ping.classList.add('active'), 50);
-    pingCount++;
-    if (pingCount > 30) clearInterval(pingInt);
-  }, 300);
-
-  let minutes = 0;
-  const timerInt = setInterval(() => {
-    minutes++;
-    timerEl.textContent = String(minutes).padStart(2, '0') + ':00';
-    if (minutes >= 13) {
-      clearInterval(timerInt);
-      timerEl.style.color = '#f00';
-      shield.classList.add('down');
-      setTimeout(() => {
-        fortress.classList.add('breached');
-        document.querySelectorAll('.ping').forEach(p => p.classList.add('threat'));
-      }, 1000);
-      setTimeout(() => {
-        counterEl.classList.add('show');
-        let vulns = 0;
-        const vulnInt = setInterval(() => {
-          vulns += Math.floor(1 + Math.random() * 4);
-          if (vulns > 138) vulns = 138;
-          counterEl.textContent = vulns;
-          if (Math.random() > 0.6) {
-            const leak = document.createElement('div');
-            leak.className = 'data-leak visible';
-            const leakTexts = ['SSN:***-**-4521','pwd:a8f3$k!','TOP SECRET','CLASSIFIED','db_dump.sql','root@pentagon:~#','CVE-2016-****','port:443 OPEN'];
-            leak.textContent = leakTexts[Math.floor(Math.random() * leakTexts.length)];
-            leak.style.left = (30 + Math.random() * 40) + '%';
-            leak.style.top = (40 + Math.random() * 20) + '%';
-            leaksContainer.appendChild(leak);
-            setTimeout(() => leak.remove(), 3000);
-          }
-          if (vulns >= 138) clearInterval(vulnInt);
-        }, 300);
-      }, 1500);
-    }
-  }, 1200);
-}
-
-// Slide 4: Live hacking terminal
-let s4Started = false;
-function startSlide4() {
-  if (s4Started) return;
-  s4Started = true;
-  const body = document.getElementById('hack-body');
-  const phase = document.getElementById('phase-indicator');
-
-  const commands = [
-    {phase:'RECON', type:'prompt', text:'nmap -sV -O 192.168.1.105'},
-    {type:'output', text:'Starting Nmap 7.94...'},
-    {type:'output', text:'PORT    STATE  SERVICE   VERSION'},
-    {type:'output', text:'22/tcp  open   ssh       OpenSSH 8.2'},
-    {type:'output', text:'80/tcp  open   http      Apache 2.4.41'},
-    {type:'warning', text:'443/tcp open   https     VULNERABLE'},
-    {phase:'SCAN', type:'prompt', text:'nikto -h https://192.168.1.105'},
-    {type:'output', text:'+ Server: Apache/2.4.41 (Ubuntu)'},
-    {type:'warning', text:'+ /admin: Directory indexing found'},
-    {type:'warning', text:'+ /login.php: SQL injection possible'},
-    {phase:'EXPLOIT', type:'prompt', text:"sqlmap -u 'https://target/login.php?id=1' --dbs"},
-    {type:'output', text:'[*] testing connection to target URL...'},
-    {type:'error', text:'[!] parameter id is vulnerable'},
-    {type:'output', text:'available databases: [3]'},
-    {type:'output', text:'[*] admin_db\n[*] users\n[*] credentials'},
-    {phase:'REPORT', type:'prompt', text:'python3 generate_report.py --output pentest_report.pdf'},
-    {type:'success', text:'[✓] Report generated: 14 vulnerabilities found'},
-    {type:'success', text:'[✓] Severity: 3 Critical, 5 High, 6 Medium'},
-    {type:'success', text:'[✓] Sent to client: security@company.com'},
+// === SLIDE 4: Live Terminal ===
+let s4Go=false;
+function initS4(){
+  if(s4Go)return;s4Go=true;
+  const body=document.getElementById('s4-body'),phase=document.getElementById('s4-phase');
+  const cmds=[
+    {ph:'RECON',cl:'',t:'prompt',x:'nmap -sV -O 192.168.1.105'},
+    {t:'out',x:'Starting Nmap 7.94 ...'},
+    {t:'out',x:'PORT    STATE  SERVICE   VERSION'},
+    {t:'out',x:'22/tcp  open   ssh       OpenSSH 8.2'},
+    {t:'out',x:'80/tcp  open   http      Apache 2.4.41'},
+    {t:'warn',x:'443/tcp open   https     VULNERABLE'},
+    {ph:'SCAN',cl:'',t:'prompt',x:'nikto -h https://192.168.1.105'},
+    {t:'out',x:'+ Server: Apache/2.4.41 (Ubuntu)'},
+    {t:'warn',x:'+ /admin: Directory indexing found'},
+    {t:'warn',x:'+ /login.php: SQL injection possible'},
+    {ph:'EXPLOIT',cl:'red',t:'prompt',x:"sqlmap -u 'target/login?id=1' --dbs"},
+    {t:'out',x:'[*] testing connection...'},
+    {t:'err',x:'[!] parameter id is vulnerable'},
+    {t:'out',x:'available databases: [3]'},
+    {t:'out',x:'[*] admin_db  [*] users  [*] credentials'},
+    {ph:'REPORT',cl:'cyan',t:'prompt',x:'python3 generate_report.py'},
+    {t:'suc',x:'[✓] Report: 14 vulnerabilities found'},
+    {t:'suc',x:'[✓] Severity: 3 Critical, 5 High, 6 Medium'},
+    {t:'suc',x:'[✓] Sent to: security@company.com'},
   ];
-
-  let idx = 0;
-  function typeLine() {
-    if (idx >= commands.length) return;
-    const cmd = commands[idx];
-    if (cmd.phase) {
-      phase.className = 'phase-indicator show';
-      if (cmd.phase === 'EXPLOIT') phase.classList.add('warn');
-      else if (cmd.phase === 'REPORT') phase.classList.add('done');
-      phase.textContent = cmd.phase;
-    }
-    const line = document.createElement('div');
-    line.className = 'ht-line visible';
-    if (cmd.type === 'prompt') {
-      line.innerHTML = `<span class="ht-prompt">┌──(hacker㉿kali)-[~/pentest]\n└─$ </span><span class="ht-cmd">${cmd.text}</span>`;
-    } else {
-      line.innerHTML = `<span class="ht-${cmd.type}">${cmd.text}</span>`;
-    }
-    body.appendChild(line);
-    body.scrollTop = body.scrollHeight;
-    idx++;
-    const delay = cmd.type === 'prompt' ? 1800 : 600 + Math.random() * 400;
-    setTimeout(typeLine, delay);
+  let i=0;
+  function next(){
+    if(i>=cmds.length)return;
+    const c=cmds[i];
+    if(c.ph){phase.className='s4-phase on'+(c.cl?' '+c.cl:'');phase.textContent=c.ph}
+    const ln=document.createElement('div');ln.className='s4-ln on';
+    if(c.t==='prompt')ln.innerHTML=`<span class="s4-p">┌──(hacker㉿kali)\n└─$ </span><span class="s4-c">${c.x}</span>`;
+    else{const cls={out:'s4-o',warn:'s4-w',err:'s4-e',suc:'s4-s'};ln.innerHTML=`<span class="${cls[c.t]}">${c.x}</span>`}
+    body.appendChild(ln);body.scrollTop=body.scrollHeight;i++;
+    setTimeout(next,c.t==='prompt'?1600:500+Math.random()*300);
   }
-  typeLine();
+  next();
 }
 
-// Slide 5: Skill Tree
-let s5Started = false;
-function startSlide5() {
-  if (s5Started) return;
-  s5Started = true;
-
-  const nodes = [
-    // Tier 1 (base)
-    {id:0, icon:'🐧', label:'LINUX', x:320, y:350, tier:''},
-    {id:1, icon:'🐍', label:'PYTHON', x:180, y:350, tier:''},
-    {id:2, icon:'🌐', label:'NETWORKING', x:460, y:350, tier:''},
-    // Tier 2 (mid)
-    {id:3, icon:'🔓', label:'CRYPTO', x:120, y:230, tier:'tier2', from:[1]},
-    {id:4, icon:'💉', label:'SQL INJECT', x:260, y:230, tier:'tier2', from:[0,1]},
-    {id:5, icon:'🛡️', label:'FIREWALLS', x:400, y:230, tier:'tier2', from:[0,2]},
-    {id:6, icon:'📡', label:'WIFI HACK', x:540, y:230, tier:'tier2', from:[2]},
-    // Tier 3 (top)
-    {id:7, icon:'🧬', label:'MALWARE', x:190, y:110, tier:'tier3', from:[3,4]},
-    {id:8, icon:'🎯', label:'PENTEST', x:350, y:110, tier:'tier3', from:[4,5]},
-    {id:9, icon:'💀', label:'RED TEAM', x:500, y:110, tier:'tier3', from:[5,6]},
+// === SLIDE 5: Skill Tree ===
+let s5Go=false;
+function initS5(){
+  if(s5Go)return;s5Go=true;
+  const nodes=[
+    {id:0,icon:'🐧',lbl:'LINUX',x:290,y:340,t:''},
+    {id:1,icon:'🐍',lbl:'PYTHON',x:150,y:340,t:''},
+    {id:2,icon:'🌐',lbl:'NETWORK',x:430,y:340,t:''},
+    {id:3,icon:'🔓',lbl:'CRYPTO',x:90,y:210,t:'t2',f:[1]},
+    {id:4,icon:'💉',lbl:'SQLi',x:230,y:210,t:'t2',f:[0,1]},
+    {id:5,icon:'🛡️',lbl:'FIREWALL',x:370,y:210,t:'t2',f:[0,2]},
+    {id:6,icon:'📡',lbl:'WIFI',x:510,y:210,t:'t2',f:[2]},
+    {id:7,icon:'🧬',lbl:'MALWARE',x:160,y:80,t:'t3',f:[3,4]},
+    {id:8,icon:'🎯',lbl:'PENTEST',x:320,y:80,t:'t3',f:[4,5]},
+    {id:9,icon:'💀',lbl:'RED TEAM',x:470,y:80,t:'t3',f:[5,6]},
   ];
-
-  const nodesContainer = document.getElementById('skill-nodes');
-  const connectorsContainer = document.getElementById('skill-connectors');
-  const xpFill = document.getElementById('xp-fill');
-
-  // Create connector lines
-  nodes.forEach(node => {
-    if (node.from) {
-      node.from.forEach(fromId => {
-        const from = nodes[fromId];
-        const dx = node.x - from.x;
-        const dy = node.y - from.y;
-        const length = Math.sqrt(dx*dx + dy*dy);
-        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-        const conn = document.createElement('div');
-        conn.className = 'skill-connector';
-        conn.dataset.to = node.id;
-        conn.style.width = length + 'px';
-        conn.style.left = (from.x + 30) + 'px';
-        conn.style.top = (from.y + 30) + 'px';
-        conn.style.transform = `rotate(${angle}deg)`;
-        if (node.tier === 'tier2') conn.classList.add('t2');
-        connectorsContainer.appendChild(conn);
-      });
-    }
-  });
-
-  // Create nodes
-  nodes.forEach(node => {
-    const div = document.createElement('div');
-    div.className = 'skill-node ' + node.tier;
-    div.style.left = node.x + 'px';
-    div.style.top = node.y + 'px';
-    div.dataset.id = node.id;
-    div.innerHTML = `${node.icon}<span class="skill-node-label">${node.label}</span>`;
-    nodesContainer.appendChild(div);
-  });
-
-  // Unlock nodes sequentially
-  let unlockIdx = 0;
-  const unlockOrder = [0,1,2,3,4,5,6,7,8,9];
-  const unlockInt = setInterval(() => {
-    if (unlockIdx >= unlockOrder.length) { clearInterval(unlockInt); return; }
-    const nodeId = unlockOrder[unlockIdx];
-    const el = nodesContainer.querySelector(`[data-id="${nodeId}"]`);
-    el.classList.add('unlocked');
-    // Activate connectors leading to this node
-    connectorsContainer.querySelectorAll(`[data-to="${nodeId}"]`).forEach(c => c.classList.add('active'));
-    // Update XP bar
-    xpFill.style.width = ((unlockIdx + 1) / unlockOrder.length * 100) + '%';
-    unlockIdx++;
-  }, 2000);
+  const tree=document.getElementById('s5-tree'),xp=document.getElementById('s5-xp');
+  // connectors
+  nodes.forEach(n=>{if(n.f)n.f.forEach(fi=>{const fr=nodes[fi],dx=n.x-fr.x,dy=n.y-fr.y,len=Math.sqrt(dx*dx+dy*dy),ang=Math.atan2(dy,dx)*180/Math.PI;const c=document.createElement('div');c.className='s5-conn'+(n.t==='t2'?' t2':'');c.dataset.to=n.id;c.style.cssText=`width:${len}px;left:${fr.x+28}px;top:${fr.y+28}px;transform:rotate(${ang}deg)`;tree.appendChild(c)})});
+  // nodes
+  nodes.forEach(n=>{const d=document.createElement('div');d.className='s5-node '+n.t;d.dataset.id=n.id;d.style.cssText=`left:${n.x}px;top:${n.y}px`;d.innerHTML=`${n.icon}<span class="s5-nlbl">${n.lbl}</span>`;tree.appendChild(d)});
+  let ui=0;const order=[0,1,2,3,4,5,6,7,8,9];
+  const si=setInterval(()=>{if(ui>=order.length){clearInterval(si);return}const id=order[ui];tree.querySelector(`.s5-node[data-id="${id}"]`).classList.add('on');tree.querySelectorAll(`.s5-conn[data-to="${id}"]`).forEach(c=>c.classList.add('on'));xp.style.width=((ui+1)/order.length*100)+'%';ui++},2200);
 }
 
-// Slide 6: Choose Your Path
-let s6Started = false;
-function startSlide6() {
-  if (s6Started) return;
-  s6Started = true;
-
-  const darkIcon = document.getElementById('dark-icon');
-  const lightIcon = document.getElementById('light-icon');
-  const darkItems = document.getElementById('dark-items');
-  const lightItems = document.getElementById('light-items');
-  const pathDark = document.getElementById('path-dark');
-  const pathLight = document.getElementById('path-light');
-  const divider = document.getElementById('path-divider');
-  const finalMsg = document.getElementById('final-message');
-
-  const darkList = [
-    {icon:'⛓️', text:'5+ YEARS PRISON'},
-    {icon:'🚫', text:'CRIMINAL RECORD'},
-    {icon:'📵', text:'NO INTERNET ACCESS'},
-    {icon:'💀', text:'DESTROYED FUTURE'}
-  ];
-  const lightList = [
-    {icon:'💰', text:'$96K — $220K+'},
-    {icon:'🌍', text:'WORK ANYWHERE'},
-    {icon:'🏆', text:'BUG BOUNTIES'},
-    {icon:'🚀', text:'33% GROWTH'}
-  ];
-
-  // Show icons
-  setTimeout(() => darkIcon.classList.add('show'), 500);
-  setTimeout(() => lightIcon.classList.add('show'), 700);
-
-  // Show dark items
-  darkList.forEach((item, i) => {
-    setTimeout(() => {
-      const div = document.createElement('div');
-      div.className = 'path-item dark-item show';
-      div.innerHTML = `<span class="path-item-icon">${item.icon}</span>${item.text}`;
-      darkItems.appendChild(div);
-    }, 2000 + i * 600);
-  });
-
-  // Show light items
-  lightList.forEach((item, i) => {
-    setTimeout(() => {
-      const div = document.createElement('div');
-      div.className = 'path-item light-item show';
-      div.innerHTML = `<span class="path-item-icon">${item.icon}</span>${item.text}`;
-      lightItems.appendChild(div);
-    }, 2000 + i * 600);
-  });
-
-  // After both sides shown, ethical side wins
-  setTimeout(() => {
-    pathDark.classList.add('fade');
-    pathLight.classList.add('expand');
-    divider.classList.add('shift');
-    setTimeout(() => finalMsg.classList.add('show'), 1000);
-  }, 20000);
+// === SLIDE 6: Choose Path ===
+let s6Go=false;
+function initS6(){
+  if(s6Go)return;s6Go=true;
+  const di=document.getElementById('s6-di'),li=document.getElementById('s6-li'),dl=document.getElementById('s6-dl'),ll=document.getElementById('s6-ll'),dark=document.getElementById('s6-dark'),light=document.getElementById('s6-light'),div=document.getElementById('s6-divider'),fin=document.getElementById('s6-final');
+  const dItems=['⛓️  5+ YEARS PRISON','🚫  CRIMINAL RECORD','📵  NO INTERNET','💀  DESTROYED FUTURE'];
+  const lItems=['💰  $96K — $220K+','🌍  WORK ANYWHERE','🏆  BUG BOUNTIES','🚀  33% GROWTH'];
+  setTimeout(()=>di.classList.add('on'),400);
+  setTimeout(()=>li.classList.add('on'),600);
+  dItems.forEach((t,i)=>setTimeout(()=>{const d=document.createElement('div');d.className='s6-item dk on';d.textContent=t;dl.appendChild(d)},1800+i*700));
+  lItems.forEach((t,i)=>setTimeout(()=>{const d=document.createElement('div');d.className='s6-item lt on';d.textContent=t;ll.appendChild(d)},1800+i*700));
+  setTimeout(()=>{dark.classList.add('fade');light.classList.add('grow');div.classList.add('shift');setTimeout(()=>fin.classList.add('on'),1000)},22000);
 }
 
-// Slide management
-const slides = document.querySelectorAll('.slide');
-let currentSlide = 0;
-let timeLeft = 30;
-let timerInterval;
-const progressBar = document.getElementById('progress-bar');
-const timerText = document.getElementById('timer');
-const slideCounter = document.getElementById('slide-counter');
+// === SLIDE MANAGEMENT ===
+const slides=document.querySelectorAll('.slide');
+let cur=0,timeLeft=30;
+const timerEl=document.getElementById('timer'),progEl=document.getElementById('progress'),snumEl=document.getElementById('snum');
 
-function updateProgress() {
-  const elapsed = 30 - timeLeft;
-  const totalProgress = ((currentSlide * 30 + elapsed) / (6 * 30)) * 100;
-  progressBar.style.width = totalProgress + '%';
+function go(n){
+  slides[cur].classList.remove('active');
+  cur=n;
+  if(cur>=slides.length){cur=0;resetAll()}
+  slides[cur].classList.add('active');
+  snumEl.textContent=String(cur+1).padStart(2,'0')+'/06';
+  timeLeft=30;document.body.style.backgroundColor='#050505';
+  if(cur===1)initS2();if(cur===2)initS3();if(cur===3)initS4();if(cur===4)initS5();if(cur===5)initS6();
 }
 
-function nextSlide() {
-  slides[currentSlide].classList.remove('active');
-  currentSlide++;
-  if (currentSlide >= slides.length) {
-    currentSlide = 0;
-    resetAll();
-  }
-  slides[currentSlide].classList.add('active');
-  slideCounter.textContent = String(currentSlide + 1).padStart(2, '0') + '/06';
-  if (currentSlide === 1) startSlide2();
-  if (currentSlide === 2) startPentagon();
-  if (currentSlide === 3) startSlide4();
-  if (currentSlide === 4) startSlide5();
-  if (currentSlide === 5) startSlide6();
-  timeLeft = 30;
-  document.body.style.backgroundColor = 'rgb(0,0,0)';
+function resetAll(){
+  s2Go=s3Go=s4Go=s5Go=s6Go=false;
+  // s1
+  document.getElementById('s1-shackle').className='s1-shackle';
+  document.getElementById('s1-body').className='s1-body';
+  document.getElementById('s1-pw').className='s1-pw';
+  document.getElementById('s1-status').className='s1-status';
+  document.getElementById('s1-burst').className='s1-burst';
+  document.getElementById('s1-att').textContent='';
+  document.querySelectorAll('.s1-dot').forEach(d=>d.className='s1-dot');
+  document.getElementById('s1-left').innerHTML='';
+  document.getElementById('s1-right').innerHTML='';
+  initS1();
+  // s2
+  const tk=document.getElementById('s2-tick');tk.className='s2-ticker';tk.textContent='$0';
+  document.getElementById('s2-scale').className='s2-scale';
+  document.getElementById('s2-pl').className='s2-plate left';
+  document.getElementById('s2-pr').className='s2-plate right';
+  document.getElementById('s2-mult').className='s2-mult';
+  // s3
+  document.getElementById('s3-time').textContent='00:00';document.getElementById('s3-time').style.color='#0f0';
+  document.getElementById('s3-count').className='s3-count';document.getElementById('s3-count').textContent='0';
+  document.getElementById('s3-fort').className='s3-fort';
+  document.getElementById('s3-shield').className='s3-shield';
+  document.getElementById('s3-pings').innerHTML='';document.getElementById('s3-leaks').innerHTML='';
+  // s4
+  document.getElementById('s4-body').innerHTML='';document.getElementById('s4-phase').className='s4-phase';
+  // s5
+  document.getElementById('s5-tree').innerHTML='';document.getElementById('s5-xp').style.width='0%';
+  // s6
+  document.getElementById('s6-dl').innerHTML='';document.getElementById('s6-ll').innerHTML='';
+  document.getElementById('s6-di').className='s6-icon';document.getElementById('s6-li').className='s6-icon';
+  document.getElementById('s6-dark').className='s6-dark';document.getElementById('s6-light').className='s6-light';
+  document.getElementById('s6-divider').className='s6-div';document.getElementById('s6-final').className='s6-final';
 }
 
-function resetAll() {
-  // Reset all started flags
-  s2Started = false;
-  pentagonStarted = false;
-  s4Started = false;
-  s5Started = false;
-  s6Started = false;
+setInterval(()=>{
+  timeLeft--;timerEl.textContent=timeLeft;
+  const elapsed=30-timeLeft;progEl.style.width=((cur*30+elapsed)/(6*30)*100)+'%';
+  // bg color shift
+  const r=timeLeft/30;
+  if(r>.5)document.body.style.backgroundColor=`rgb(5,${Math.floor(12*(1-r))},5)`;
+  else if(r>.2){const t=(.5-r)/.3;document.body.style.backgroundColor=`rgb(${Math.floor(25*t)},${Math.floor(10*t)},0)`}
+  else{const t=(.2-r)/.2;document.body.style.backgroundColor=`rgb(${Math.floor(25+20*t)},0,0)`}
+  if(timeLeft<=0)go(cur+1);
+},1000);
 
-  // Reset slide 2
-  const ticker = document.getElementById('s2-ticker');
-  ticker.className = 's2-ticker'; ticker.textContent = '$0';
-  document.getElementById('scale-visual').style.opacity = '0';
-  document.getElementById('scale-beam').className = 'scale-beam';
-  document.getElementById('plate-left').className = 'scale-plate left';
-  document.getElementById('plate-right').className = 'scale-plate right';
-  document.getElementById('s2-multiplier').className = 's2-multiplier';
-
-  // Reset slide 3
-  document.getElementById('s3-timer').textContent = '00:00';
-  document.getElementById('s3-timer').style.color = '#0f0';
-  document.getElementById('s3-counter').className = 's3-counter';
-  document.getElementById('s3-counter').textContent = '0';
-  document.getElementById('fortress').className = 'fortress';
-  document.getElementById('fortress-shield').className = 'fortress-shield';
-  document.getElementById('radar-pings').innerHTML = '';
-  document.getElementById('data-leaks').innerHTML = '';
-
-  // Reset slide 4
-  document.getElementById('hack-body').innerHTML = '';
-  document.getElementById('phase-indicator').className = 'phase-indicator';
-
-  // Reset slide 5
-  document.getElementById('skill-nodes').innerHTML = '';
-  document.getElementById('skill-connectors').innerHTML = '';
-  document.getElementById('xp-fill').style.width = '0%';
-
-  // Reset slide 6
-  const s6 = document.getElementById('s6-content');
-  s6.innerHTML = `<div class="path-split"><div class="path-side dark" id="path-dark"><div class="path-icon" id="dark-icon">🚔</div><div class="path-items" id="dark-items"></div></div><div class="path-divider" id="path-divider"></div><div class="path-side light" id="path-light"><div class="path-icon" id="light-icon">💻</div><div class="path-items" id="light-items"></div></div></div><div class="final-message" id="final-message"><span class="final-number">$220,000+</span><span class="final-sub">3,500,000 POSITIONS WAITING</span></div>`;
-
-  // Restart slide 1 breach
-  document.getElementById('lock-shackle').className = 'lock-shackle';
-  document.getElementById('lock-body').className = 'lock-body';
-  document.getElementById('pw-field').className = 'password-field';
-  document.getElementById('pw-status').className = 'pw-status';
-  document.getElementById('burst-effect').className = 'burst-effect';
-  document.getElementById('attempt-counter').textContent = '';
-  document.querySelectorAll('.pw-dot').forEach(d => d.className = 'pw-dot');
-  document.getElementById('port-scan').innerHTML = '';
-  document.getElementById('ip-scroll').innerHTML = '';
-  startBreach();
-}
-
-function updateTimerBackground() {
-  const ratio = timeLeft / 30;
-  let r, g, b;
-  if (ratio > 0.5) {
-    // Green to dark (30-15s)
-    r = 0;
-    g = Math.floor(20 * (1 - ratio));
-    b = 0;
-  } else if (ratio > 0.2) {
-    // Dark to amber warning (15-6s)
-    const t = (0.5 - ratio) / 0.3;
-    r = Math.floor(30 * t);
-    g = Math.floor(15 * t);
-    b = 0;
-  } else {
-    // Amber to red danger (6-0s)
-    const t = (0.2 - ratio) / 0.2;
-    r = Math.floor(30 + 20 * t);
-    g = 0;
-    b = 0;
-  }
-  document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
-}
-
-function startTimer() {
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    timerText.textContent = timeLeft;
-    updateProgress();
-    updateTimerBackground();
-    if (timeLeft <= 0) {
-      nextSlide();
-    }
-  }, 1000);
-}
-
-startTimer();
-
-// Keyboard navigation (optional)
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight' || e.key === ' ') {
-    nextSlide();
-  }
-});
-
-// Resize handler
-window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(cur+1)});
 </script>
 </body>
 </html>
