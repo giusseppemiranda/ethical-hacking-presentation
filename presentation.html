@@ -414,47 +414,58 @@ function go(n){
   if(n<0)n=0;
   slides[cur].classList.remove('active');
   cur=n;
-  if(cur>=slides.length){cur=0;resetAll()}
+  if(cur>=slides.length)cur=0;
+  resetSlide(cur);
   slides[cur].classList.add('active');
   snumEl.textContent=String(cur+1).padStart(2,'0')+'/07';
   timeLeft=30;document.body.style.backgroundColor='#050505';
-  if(cur===1)initS2();if(cur===2)initS3();if(cur===3)initS4();if(cur===4)initS5();if(cur===5)initS6();
+  if(cur===0)initS1();if(cur===1)initS2();if(cur===2)initS3();if(cur===3)initS4();if(cur===4)initS5();if(cur===5)initS6();
 }
 
-function resetAll(){
-  s2Go=s3Go=s4Go=s5Go=s6Go=false;
-  // s1
-  document.getElementById('s1-shackle').className='s1-shackle';
-  document.getElementById('s1-body').className='s1-body';
-  document.getElementById('s1-pw').className='s1-pw';
-  document.getElementById('s1-status').className='s1-status';
-  document.getElementById('s1-burst').className='s1-burst';
-  document.getElementById('s1-att').textContent='';
-  document.querySelectorAll('.s1-dot').forEach(d=>d.className='s1-dot');
-  document.getElementById('s1-left').innerHTML='';
-  document.getElementById('s1-right').innerHTML='';
-  initS1();
-  // s2
-  const tk=document.getElementById('s2-tick');tk.className='s2-ticker';tk.textContent='$0';
-  document.getElementById('s2-scale').className='s2-scale';
-  document.getElementById('s2-pl').className='s2-plate left';
-  document.getElementById('s2-pr').className='s2-plate right';
-  document.getElementById('s2-mult').className='s2-mult';
-  // s3
-  document.getElementById('s3-time').textContent='00:00';document.getElementById('s3-time').style.color='#0f0';
-  document.getElementById('s3-count').className='s3-count';document.getElementById('s3-count').textContent='0';
-  document.getElementById('s3-fort').className='s3-fort';
-  document.getElementById('s3-shield').className='s3-shield';
-  document.getElementById('s3-pings').innerHTML='';document.getElementById('s3-leaks').innerHTML='';
-  // s4
-  document.getElementById('s4-body').innerHTML='';document.getElementById('s4-phase').className='s4-phase';
-  // s5
-  document.getElementById('s5-tree').innerHTML='';document.getElementById('s5-xp').style.width='0%';
-  // s6
-  document.getElementById('s6-dl').innerHTML='';document.getElementById('s6-ll').innerHTML='';
-  document.getElementById('s6-di').className='s6-icon';document.getElementById('s6-li').className='s6-icon';
-  document.getElementById('s6-dark').className='s6-dark';document.getElementById('s6-light').className='s6-light';
-  document.getElementById('s6-divider').className='s6-div';document.getElementById('s6-final').className='s6-final';
+function resetSlide(n){
+  if(n===0){
+    s2Go=s3Go=s4Go=s5Go=s6Go=false;
+    document.getElementById('s1-shackle').className='s1-shackle';
+    document.getElementById('s1-body').className='s1-body';
+    document.getElementById('s1-pw').className='s1-pw';
+    document.getElementById('s1-status').className='s1-status';
+    document.getElementById('s1-burst').className='s1-burst';
+    document.getElementById('s1-att').textContent='';
+    document.querySelectorAll('.s1-dot').forEach(d=>d.className='s1-dot');
+    document.getElementById('s1-left').innerHTML='';
+    document.getElementById('s1-right').innerHTML='';
+  }
+  if(n===1){
+    s2Go=false;
+    document.getElementById('s2-tick').className='s2-ticker';document.getElementById('s2-tick').textContent='$0';
+    document.getElementById('s2-scale').className='s2-scale';
+    document.getElementById('s2-pl').className='s2-plate left';
+    document.getElementById('s2-pr').className='s2-plate right';
+    document.getElementById('s2-mult').className='s2-mult';
+  }
+  if(n===2){
+    s3Go=false;
+    document.getElementById('s3-time').textContent='00:00';document.getElementById('s3-time').style.color='#0f0';
+    document.getElementById('s3-count').className='s3-count';document.getElementById('s3-count').textContent='0';
+    document.getElementById('s3-fort').className='s3-fort';
+    document.getElementById('s3-shield').className='s3-shield';
+    document.getElementById('s3-pings').innerHTML='';document.getElementById('s3-leaks').innerHTML='';
+  }
+  if(n===3){
+    s4Go=false;
+    document.getElementById('s4-body').innerHTML='';document.getElementById('s4-phase').className='s4-phase';
+  }
+  if(n===4){
+    s5Go=false;
+    document.getElementById('s5-tree').innerHTML='';document.getElementById('s5-xp').style.width='0%';
+  }
+  if(n===5){
+    s6Go=false;
+    document.getElementById('s6-dl').innerHTML='';document.getElementById('s6-ll').innerHTML='';
+    document.getElementById('s6-di').className='s6-icon';document.getElementById('s6-li').className='s6-icon';
+    document.getElementById('s6-dark').className='s6-dark';document.getElementById('s6-light').className='s6-light';
+    document.getElementById('s6-divider').className='s6-div';document.getElementById('s6-final').className='s6-final';
+  }
 }
 
 setInterval(()=>{
